@@ -15,16 +15,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from store.views import ShopUpdate, SignUp, LogIn, ProductList, ProductInfoView, BasketView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('shop_update/', ShopUpdate.as_view(), name='shop_update'),
-    path('sign_up/', SignUp.as_view(), name='sing_up'),
-    path('login/', LogIn.as_view(), name='login'),
-    # path('products/', ProductList.as_view(), name='product_list'),
-    path('products_info/', ProductInfoView.as_view(), name='product_info'),
-    path('basket/', BasketView.as_view(), name='basket'),
-    # path('basket/', BasketView.as_view(), name='basket')
-    # path('api/v1/', include('store.urls')),
+    path('api/', include('store.urls')),
 ]

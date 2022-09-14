@@ -1,7 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
-
 ORDER_STATUS = (
     ('basket', 'В корзине'),
     ('cancelled', 'Отменён'),
@@ -27,21 +26,23 @@ class User(AbstractUser):
     class Meta:
         verbose_name = 'Магазин'
         verbose_name_plural = 'Магазины'
-        ordering = ('username', )
+        ordering = ('username',)
 
     def __str__(self):
         return self.username
 
 
 class Shop(models.Model):
+    user = models.ForeignKey(User, verbose_name='Менеджер', related_name='shops', blank=True, null=True,
+                             on_delete=models.CASCADE)
     name = models.CharField(max_length=60, verbose_name='Название', null=False, blank=False)
     url = models.URLField(verbose_name='Ссылка', null=True, blank=True)
-    state = models.BooleanField(verbose_name='Получение заказов', default=True)
+    status = models.BooleanField(verbose_name='Получение заказов', default=True)
 
     class Meta:
         verbose_name = 'Магазин'
         verbose_name_plural = 'Магазины'
-        ordering = ('name', )
+        ordering = ('name',)
 
     def __str__(self):
         return self.name
@@ -54,7 +55,7 @@ class Category(models.Model):
     class Meta:
         verbose_name = 'Категория'
         verbose_name_plural = 'Категории'
-        ordering = ('name', )
+        ordering = ('name',)
 
     def __str__(self):
         return self.name
@@ -68,7 +69,7 @@ class Product(models.Model):
     class Meta:
         verbose_name = 'Продукт'
         verbose_name_plural = 'Продукты'
-        ordering = ('name', )
+        ordering = ('name',)
 
     def __str__(self):
         return self.name
@@ -98,7 +99,7 @@ class Parameter(models.Model):
     class Meta:
         verbose_name = 'Параметр'
         verbose_name_plural = 'Параметры'
-        ordering = ('name', )
+        ordering = ('name',)
 
     def __str__(self):
         return self.name
@@ -122,11 +123,13 @@ class Order(models.Model):
                              on_delete=models.CASCADE)
     dt = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=30, verbose_name='Статус заказа', choices=ORDER_STATUS)
+    contact = models.ForeignKey('Contact', verbose_name='Контакты', related_name='orders', blank=True,
+                                null=True, on_delete=models.CASCADE)
 
     class Meta:
         verbose_name = 'Заказ'
         verbose_name_plural = 'Заказы'
-        ordering = ('status', )
+        ordering = ('status',)
 
     def __str__(self):
         return self.status
@@ -151,7 +154,10 @@ class Contact(models.Model):
     user = models.ForeignKey(User, verbose_name='Пользователь', related_name='contacts', blank=True,
                              on_delete=models.CASCADE)
     phone = models.CharField(max_length=11, verbose_name='Телефон', blank=True)
-    address = models.CharField(max_length=60, verbose_name='Адрес', blank=True)
+    country = models.CharField(max_length=60, verbose_name='Страна', blank=True)
+    city = models.CharField(max_length=60, verbose_name='Город', blank=True)
+    street = models.CharField(max_length=60, verbose_name='Улица', blank=True)
+    building = models.CharField(max_length=10, verbose_name='Номер дома', blank=True)
 
     class Meta:
         verbose_name = 'Контакты пользователя'

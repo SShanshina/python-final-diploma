@@ -10,11 +10,9 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class CategorySerializer(serializers.ModelSerializer):
-    # shops = ShopSerializer(many=True)
 
     class Meta:
         model = Category
-        # fields = ['name', 'shops']
         fields = ['name']
 
 
@@ -23,8 +21,7 @@ class ShopSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Shop
-        # fields = ['name', 'url', 'state']
-        fields = ['name', 'url', 'state', 'categories']
+        fields = ['name', 'url', 'status', 'categories']
 
 
 class ProductSerializer(serializers.ModelSerializer):
@@ -60,14 +57,22 @@ class ProductParameterSerializer(serializers.ModelSerializer):
         fields = ['parameter', 'product_info', 'value']
 
 
-class OrderSerializer(serializers.ModelSerializer):
+class ContactSerializer(serializers.ModelSerializer):
     user = UserSerializer
+
+    class Meta:
+        model = Contact
+        fields = ['user', 'phone', 'country', 'city', 'street', 'building']
+
+
+class OrderSerializer(serializers.ModelSerializer):
+    contact = ContactSerializer
     order_items = ProductInfoSerializer
     total_sum = serializers.IntegerField()
 
     class Meta:
         model = Order
-        fields = ['user', 'dt', 'status', 'order_items', 'total_sum']
+        fields = ['id', 'dt', 'status', 'order_items', 'total_sum', 'contact']
 
 
 class OrderItemSerializer(serializers.ModelSerializer):
@@ -78,11 +83,3 @@ class OrderItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = OrderItem
         fields = ['order', 'product_info', 'shop', 'quantity']
-
-
-class ContactSerializer(serializers.ModelSerializer):
-    user = UserSerializer
-
-    class Meta:
-        model = Contact
-        fields = ['name', 'phone']
